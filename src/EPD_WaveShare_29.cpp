@@ -31,11 +31,14 @@ Many thanks go to various contributors such as Adafruit, Waveshare.
 EPD_WaveShare29::~EPD_WaveShare29() {
 };
 
-EPD_WaveShare29::EPD_WaveShare29(uint8_t csPin, uint8_t rstPin, uint8_t dcPin, uint8_t busyPin) : DisplayDriver(EPD_WIDTH, EPD_HEIGHT) {
+EPD_WaveShare29::EPD_WaveShare29(uint8_t csPin, uint8_t rstPin, uint8_t dcPin, uint8_t busyPin, uint8_t dinPin, uint8_t clkPin, SPIClass *spi) : DisplayDriver(EPD_WIDTH, EPD_HEIGHT) {
     this->reset_pin = rstPin;
     this->dc_pin = dcPin;
     this->cs_pin = csPin;
     this->busy_pin = busyPin;
+    this->din_pin = dinPin;
+    this->clk_pin = clkPin;
+    this->spi = spi;
     width = EPD_WIDTH;
     height = EPD_HEIGHT;
 };
@@ -156,10 +159,10 @@ int EPD_WaveShare29::IfInit(void) {
     pinMode(this->reset_pin, OUTPUT);
     pinMode(this->dc_pin, OUTPUT);
     pinMode(this->busy_pin, INPUT);
-    SPI.setBitOrder(MSBFIRST);  
-    SPI.setDataMode(SPI_MODE0);
-    SPI.setFrequency(4000000);
-    SPI.begin();
+    spi->setBitOrder(MSBFIRST);
+    spi->setDataMode(SPI_MODE0);
+    spi->setFrequency(4000000);
+    spi->begin(clk_pin, dc_pin, din_pin, cs_pin);
     return 0;
 }
 
@@ -178,7 +181,7 @@ void EPD_WaveShare29::DelayMs(unsigned int delaytime) {
 
 void EPD_WaveShare29::SpiTransfer(unsigned char data) {
     digitalWrite(this->cs_pin, LOW);
-    SPI.transfer(data);
+    spi->transfer(data);
     digitalWrite(this->cs_pin, HIGH);
 }
 

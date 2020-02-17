@@ -78,7 +78,7 @@ public:
     unsigned long width;
     unsigned long height;
 
-    EPD_WaveShare29(uint8_t csPin, uint8_t rstPin, uint8_t dcPin, uint8_t busyPin);
+    EPD_WaveShare29(uint8_t csPin, uint8_t rstPin, uint8_t dcPin, uint8_t busyPin, uint8_t dinPin, uint8_t clkPin, SPIClass *spi);
     ~EPD_WaveShare29();
 
     void setRotation(uint8_t r);
@@ -108,8 +108,11 @@ private:
     unsigned int reset_pin;
     unsigned int dc_pin;
     unsigned int cs_pin;
+    unsigned int din_pin;
+    unsigned int clk_pin;
     unsigned int busy_pin;
     const unsigned char* lut;
+    SPIClass *spi;
 
     uint8_t reverse(uint8_t in);
     uint8_t getPixel(uint8_t *buffer, uint16_t x, uint16_t y, uint16_t bufferWidth, uint16_t bufferHeight);
